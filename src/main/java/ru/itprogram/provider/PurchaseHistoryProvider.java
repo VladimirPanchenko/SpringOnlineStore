@@ -8,13 +8,13 @@ import ru.itprogram.service.OrderService;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-public class PurchaseHistory {
+public class PurchaseHistoryProvider {
     @Autowired
     private OrderService orderService;
     private List<OrderDto> orderDtoList;
     private UserDto userDto;
 
-    public PurchaseHistory(UserDto userDto) {
+    public PurchaseHistoryProvider(UserDto userDto) {
         this.userDto = userDto;
     }
 

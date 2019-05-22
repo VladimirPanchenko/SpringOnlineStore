@@ -1,21 +1,31 @@
 package ru.itprogram.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.PromoCode;
 import ru.itprogram.entity.dto.PromoCodeDto;
 import ru.itprogram.repository.PromoCodeRepository;
 import ru.itprogram.service.converter.promocode.PromoCodeDtoToPromoCode;
 import ru.itprogram.service.converter.promocode.PromoCodeToPromoCodeDto;
+import ru.itprogram.utils.generater.ArrayListGenerate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PromoCodeService implements Service<PromoCodeDto> {
+    @Autowired
+    private PromoCodeRepository promoCodeRepository;
+    @Autowired
+    private ArrayListGenerate arrayListGenerate;
+    @Autowired
+    private PromoCodeToPromoCodeDto promoCodeToPromoCodeDto;
+    @Autowired
+    private PromoCodeDtoToPromoCode promoCodeDtoToPromoCode;
+
     @Override
     public List<PromoCodeDto> getAll() {
-        List<PromoCode> promoCodes = new PromoCodeRepository().getAllEntity();
-        List<PromoCodeDto> promoCodeDtoList = new ArrayList<>();
+        List<PromoCode> promoCodes = promoCodeRepository.getAllEntity();
+                List<PromoCodeDto> promoCodeDtoList = arrayListGenerate.getArrayList();
         for (PromoCode promoCode : promoCodes) {
-            promoCodeDtoList.add(new PromoCodeToPromoCodeDto().conversion(promoCode));
+            promoCodeDtoList.add(promoCodeToPromoCodeDto.conversion(promoCode));
         }
         return promoCodeDtoList;
     }
@@ -23,6 +33,6 @@ public class PromoCodeService implements Service<PromoCodeDto> {
     @Override
     public void add(PromoCodeDto promoCodeDto) {
         new PromoCodeRepository().saveEntity(
-                new PromoCodeDtoToPromoCode().conversion(promoCodeDto));
+                promoCodeDtoToPromoCode.conversion(promoCodeDto));
     }
 }

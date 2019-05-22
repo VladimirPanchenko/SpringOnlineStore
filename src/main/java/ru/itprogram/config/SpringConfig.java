@@ -3,18 +3,42 @@ package ru.itprogram.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import ru.itprogram.entity.dao.*;
 import ru.itprogram.entity.dto.*;
+import ru.itprogram.exceptions.UserNameIsRepeatedException;
 import ru.itprogram.exceptions.UserNotFoundException;
 import ru.itprogram.provider.*;
+import ru.itprogram.repository.*;
 import ru.itprogram.service.*;
+import ru.itprogram.service.converter.brand.BrandDtoToBrand;
+import ru.itprogram.service.converter.brand.BrandToBrandDto;
+import ru.itprogram.service.converter.order.OrderDtoToOrder;
+import ru.itprogram.service.converter.order.OrderToOrderDto;
+import ru.itprogram.service.converter.product.ProductDtoToProduct;
+import ru.itprogram.service.converter.product.ProductToProductDto;
+import ru.itprogram.service.converter.producttype.ProductTypeDtoToProductType;
+import ru.itprogram.service.converter.producttype.ProductTypeToProductTypeDto;
+import ru.itprogram.service.converter.promocode.PromoCodeDtoToPromoCode;
+import ru.itprogram.service.converter.promocode.PromoCodeToPromoCodeDto;
+import ru.itprogram.service.converter.user.UserDtoToUser;
+import ru.itprogram.service.converter.user.UserToUserDto;
+import ru.itprogram.utils.CurrentConnection;
 import ru.itprogram.utils.ReadProductInFile;
+import ru.itprogram.utils.generater.ArrayListGenerate;
+import ru.itprogram.utils.generater.dao.*;
+import ru.itprogram.utils.generater.dto.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 @Configuration
 public class SpringConfig {
+
+    @Bean
+//    @Scope("prototype")
+    public CurrentConnection getCurrentConnection() {
+        return new CurrentConnection();
+    }
 
     @Bean
     @Scope("prototype")
@@ -54,20 +78,38 @@ public class SpringConfig {
 
     @Bean
     @Scope("prototype")
-    public PurchaseHistory getPurchaseHistory(UserDto userDto) {
-        return new PurchaseHistory(userDto);
+    public PurchaseHistoryProvider getPurchaseHistoryProvider(UserDto userDto) {
+        return new PurchaseHistoryProvider(userDto);
     }
 
     @Bean
-    @Scope("prototype")
-    public List<OrderDto> getOrderDtoList() {
-        return new ArrayList<>();
+    public BrandRepository getBrandRepository() {
+        return new BrandRepository();
     }
 
     @Bean
-    @Scope("prototype")
-    public List<ProductDto> getProductDtoList() {
-        return new ArrayList<>();
+    public OrderRepository getOrderRepository() {
+        return new OrderRepository();
+    }
+
+    @Bean
+    public ProductRepository getProductRepository() {
+        return new ProductRepository();
+    }
+
+    @Bean
+    public ProductTypeRepository getProductTypeRepository() {
+        return new ProductTypeRepository();
+    }
+
+    @Bean
+    public PromoCodeRepository getPromoCodeRepository() {
+        return new PromoCodeRepository();
+    }
+
+    @Bean
+    public UserRepository getUserRepository() {
+        return new UserRepository();
     }
 
     @Bean
@@ -138,12 +180,256 @@ public class SpringConfig {
     }
 
     @Bean
+    @Scope("prototype")
+    public Brand getBrand() {
+        return new Brand();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public Order getOrder() {
+        return new Order();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public Product getProduct() {
+        return new Product();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public ProductType getProductType() {
+        return new ProductType();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public PromoCode getPromoCode() {
+        return new PromoCode();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public User getUser() {
+        return new User();
+    }
+
+    @Bean
     public UserNotFoundException getUserNotFoundException() {
         return new UserNotFoundException(LoginProvider.USER_NOT_FOUND);
+    }
+
+    @Bean
+    public UserNameIsRepeatedException getUserNameIsRepeatedException() {
+        return new UserNameIsRepeatedException(RegistrationProvider.USER_NAME_IS_REPEATED);
     }
 
     @Bean
     public StringBuilder getStringBuilder() {
         return new StringBuilder();
     }
+
+    @Bean
+    public OrderDtoGenerate orderDtoGenerate() {
+        return new OrderDtoGenerate() {
+            @Override
+            public OrderDto createOrderDto() {
+                return new OrderDto();
+            }
+        };
+    }
+
+    @Bean
+    public ArrayListGenerate getArrayListGenerate() {
+        return new ArrayListGenerate() {
+            @Override
+            public ArrayList createArrayList() {
+                return new ArrayList<>();
+            }
+        };
+    }
+
+    @Bean
+    public UserDtoGenerate getUserDtoGenerate() {
+        return new UserDtoGenerate() {
+            @Override
+            public UserDto createUserDto() {
+                return new UserDto();
+            }
+        };
+    }
+
+    @Bean
+    public BrandDtoGenerate getBrandDtoGenerate() {
+        return new BrandDtoGenerate() {
+            @Override
+            public BrandDto createBrandDto() {
+                return new BrandDto();
+            }
+        };
+    }
+
+    @Bean
+    public ProductDtoGenerate getProductDtoGenerate() {
+        return new ProductDtoGenerate() {
+            @Override
+            public ProductDto createProductDto() {
+                return new ProductDto();
+            }
+        };
+    }
+
+    @Bean
+    public ProductTypeDtoGenerate getProductTypeDtoGenerate() {
+        return new ProductTypeDtoGenerate() {
+            @Override
+            public ProductTypeDto createProductTypeDto() {
+                return new ProductTypeDto();
+            }
+        };
+    }
+
+    @Bean
+    public PromoCodeDtoGenerate getPromoCodeDtoGenerate() {
+        return new PromoCodeDtoGenerate() {
+            @Override
+            public PromoCodeDto createPromoCodeDto() {
+                return new PromoCodeDto();
+            }
+        };
+    }
+
+    @Bean
+    public BrandGenerate getBrandGenerate() {
+        return new BrandGenerate() {
+            @Override
+            public Brand createBrand() {
+                return new Brand();
+            }
+        };
+    }
+
+    @Bean
+    public OrderGenerate getOrderGenerate() {
+        return new OrderGenerate() {
+            @Override
+            public Order createOrder() {
+                return new Order();
+            }
+        };
+    }
+
+    @Bean
+    public ProductGenerate getProductGenerate() {
+        return new ProductGenerate() {
+            @Override
+            public Product createProduct() {
+                return new Product();
+            }
+        };
+    }
+
+    @Bean
+    public ProductTypeGenerate getProductTypeGenerate() {
+        return new ProductTypeGenerate() {
+            @Override
+            public ProductType createProductType() {
+                return new ProductType();
+            }
+        };
+    }
+
+    @Bean
+    public PromoCodeGenerate getPromoCodeGenerate() {
+        return new PromoCodeGenerate() {
+            @Override
+            public PromoCode createPromoCode() {
+                return new PromoCode();
+            }
+        };
+    }
+
+    @Bean
+    public UserGenerate getUserGenerate() {
+        return new UserGenerate() {
+            @Override
+            public User createUser() {
+                return new User();
+            }
+        };
+    }
+
+    @Bean
+//    @Scope("prototype")
+    public BrandDtoToBrand getBrandDtoToBrand() {
+        return new BrandDtoToBrand();
+    }
+
+    @Bean
+    public BrandToBrandDto getBrandToBrandDto() {
+        return new BrandToBrandDto();
+    }
+
+    @Bean
+    public OrderDtoToOrder getOrderDtoToOrder() {
+        return new OrderDtoToOrder();
+    }
+
+    @Bean
+    public OrderToOrderDto getOrderToOrderDto() {
+        return new OrderToOrderDto();
+    }
+
+    @Bean
+    public ProductDtoToProduct getProductDtoToProduct() {
+        return new ProductDtoToProduct();
+    }
+
+    @Bean
+    public ProductToProductDto getProductToProductDto() {
+        return new ProductToProductDto();
+    }
+
+    @Bean
+    public ProductTypeDtoToProductType getProductTypeDtoToProductType() {
+        return new ProductTypeDtoToProductType();
+    }
+
+    @Bean
+    public ProductTypeToProductTypeDto getProductTypeToProductTypeDto() {
+        return new ProductTypeToProductTypeDto();
+    }
+
+    @Bean
+    public PromoCodeDtoToPromoCode getPromoCodeDtoToPromoCode() {
+        return new PromoCodeDtoToPromoCode();
+    }
+
+    @Bean
+    public PromoCodeToPromoCodeDto getPromoCodeToPromoCodeDto() {
+        return new PromoCodeToPromoCodeDto();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public UserDtoToUser getUserDtoToUser() {
+        return new UserDtoToUser();
+    }
+
+    @Bean
+//    @Scope("prototype")
+    public UserToUserDto getUserToUserDto() {
+        return new UserToUserDto();
+    }
+
+//    @Bean
+//    public UserConverterGenerate getUserConverterGenerate() {
+//        return new UserConverterGenerate() {
+//            @Override
+//            public UserToUserDto createUserToUserDto() {
+//                return new UserToUserDto();
+//            }
+//        };
+//    }
 }

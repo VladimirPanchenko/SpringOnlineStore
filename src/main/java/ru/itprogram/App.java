@@ -86,7 +86,7 @@ public class App {
                 break;
             case 2:
                 MenuHistoryView
-                        .HistoryPrint(context.getBean(PurchaseHistory.class).getOrderDtoList(),
+                        .HistoryPrint(context.getBean(PurchaseHistoryProvider.class).getOrderDtoList(),
                                 userDto);
                 break;
             case 3:

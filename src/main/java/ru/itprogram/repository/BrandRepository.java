@@ -1,7 +1,10 @@
 package ru.itprogram.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.Brand;
 import ru.itprogram.utils.*;
+import ru.itprogram.utils.generater.ArrayListGenerate;
+import ru.itprogram.utils.generater.dao.BrandGenerate;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,8 +14,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BrandRepository implements Repository<Brand> {
+//    @Autowired
+//    private ArrayListGenerate arrayListGenerate;
+////    @Autowired
+////    private CurrentConnection currentConnection;
+//    @Autowired
+//    private BrandGenerate brandGenerate;
+
     @Override
     public List<Brand> getAllEntity() {
+//        List<Brand> brands = arrayListGenerate.getArrayList();
         List<Brand> brands = new ArrayList<>();
         CurrentConnection currentConnection = new CurrentConnection();
         Statement statement;
@@ -21,6 +32,7 @@ public class BrandRepository implements Repository<Brand> {
             ResultSet resultSet = statement.executeQuery(SelectSql.SELECT_ALL_BRAND);
             while (resultSet.next()) {
                 Brand brand = new Brand();
+//                Brand brand = brandGenerate.getBrand();
                 brand.setId(resultSet.getInt("id"));
                 brand.setName(resultSet.getString("name"));
                 brands.add(brand);

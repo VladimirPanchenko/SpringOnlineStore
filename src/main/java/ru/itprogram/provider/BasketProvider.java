@@ -7,7 +7,10 @@ import ru.itprogram.entity.dto.ProductDto;
 import ru.itprogram.entity.dto.UserDto;
 import ru.itprogram.service.OrderService;
 import ru.itprogram.service.ProductService;
+import ru.itprogram.utils.generater.ArrayListGenerate;
+import ru.itprogram.utils.generater.dto.OrderDtoGenerate;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.Iterator;
 import java.util.List;
@@ -16,20 +19,21 @@ import java.util.List;
 public class BasketProvider {
     @Autowired
     private ProductService productService;
-    private List<ProductDto> productDtoList;
-    @Autowired
-    private List<OrderDto> orderDtoList;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderDtoGenerate orderDtoGenerate;
+    @Autowired
+    private ArrayListGenerate arrayListGenerate;
+    private List<ProductDto> productDtoList;
+    private List<OrderDto> orderDtoList;
+
+    @PostConstruct
+    private void init() {
+        orderDtoList = arrayListGenerate.getArrayList();
+    }
 
     public List<OrderDto> getOrderDtoList() {
-        Iterator iterator = orderDtoList.iterator();
-        while (iterator.hasNext()) {
-            OrderDto orderDto = (OrderDto) iterator.next();
-            if (orderDto.getUserDto() == null) {
-                iterator.remove();
-            }
-        }
         return orderDtoList;
     }
 
@@ -47,8 +51,13 @@ public class BasketProvider {
         productDtoList = productService.getAll();
         for (ProductDto productDto : productDtoList) {
             if (productDto.getId() == idProduct) {
-                orderDtoList
-                        .add(new OrderDto(userDto, productDto, false, false, LocalDateTime.now()));
+                OrderDto orderDto = orderDtoGenerate.getOrderDto();
+                orderDto.setUserDto(userDto);
+                orderDto.setProductDto(productDto);
+                orderDto.setPaid(false);
+                orderDto.setClosed(false);
+                orderDto.setOrderDate(LocalDateTime.now());
+                orderDtoList.add(orderDto);
             }
         }
     }
@@ -78,4 +87,5 @@ public class BasketProvider {
         }
         return price;
     }
+
 }

@@ -1,13 +1,16 @@
 package ru.itprogram.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.User;
 import ru.itprogram.utils.*;
+import ru.itprogram.utils.generater.ArrayListGenerate;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserRepository implements Repository<User> {
+
     @Override
     public List<User> getAllEntity() {
         List<User> users = new ArrayList<>();

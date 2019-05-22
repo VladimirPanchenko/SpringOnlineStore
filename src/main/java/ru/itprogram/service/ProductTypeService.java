@@ -1,21 +1,31 @@
 package ru.itprogram.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.ProductType;
 import ru.itprogram.entity.dto.ProductTypeDto;
 import ru.itprogram.repository.ProductTypeRepository;
 import ru.itprogram.service.converter.producttype.ProductTypeDtoToProductType;
 import ru.itprogram.service.converter.producttype.ProductTypeToProductTypeDto;
+import ru.itprogram.utils.generater.ArrayListGenerate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductTypeService implements Service<ProductTypeDto> {
+    @Autowired
+    private ProductTypeRepository productTypeRepository;
+    @Autowired
+    private ArrayListGenerate arrayListGenerate;
+    @Autowired
+    private ProductTypeToProductTypeDto productTypeToProductTypeDto;
+    @Autowired
+    private ProductTypeDtoToProductType productTypeDtoToProductType;
+
     @Override
     public List<ProductTypeDto> getAll() {
-        List<ProductType> productTypes = new ProductTypeRepository().getAllEntity();
-        List<ProductTypeDto> productTypeDtoList = new ArrayList<>();
+        List<ProductType> productTypes = productTypeRepository.getAllEntity();
+        List<ProductTypeDto> productTypeDtoList = arrayListGenerate.getArrayList();
         for (ProductType productType : productTypes) {
-            productTypeDtoList.add(new ProductTypeToProductTypeDto().conversion(productType));
+            productTypeDtoList.add(productTypeToProductTypeDto.conversion(productType));
         }
         return productTypeDtoList;
     }
@@ -23,6 +33,6 @@ public class ProductTypeService implements Service<ProductTypeDto> {
     @Override
     public void add(ProductTypeDto productTypeDto) {
         new ProductTypeRepository().saveEntity(
-                new ProductTypeDtoToProductType().conversion(productTypeDto));
+                productTypeDtoToProductType.conversion(productTypeDto));
     }
 }
