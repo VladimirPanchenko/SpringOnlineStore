@@ -5,15 +5,12 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class CurrentConnection {
-    private final String DB_URL = "jdbc:postgresql://192.168.1.201:5432/onlineStore";
-    private final String USER = "postgres";
-    private final String PASSWORD = "999138663";
     private Connection connection;
 
-    public CurrentConnection() {
+    public CurrentConnection(String dbUrl, String user, String password) {
         try {
             Class.forName("org.postgresql.Driver");
-            connection = DriverManager.getConnection(DB_URL, USER, PASSWORD);
+            connection = DriverManager.getConnection(dbUrl, user, password);
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }

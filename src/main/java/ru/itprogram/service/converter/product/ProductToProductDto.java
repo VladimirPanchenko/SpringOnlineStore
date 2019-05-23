@@ -1,5 +1,6 @@
 package ru.itprogram.service.converter.product;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.Brand;
 import ru.itprogram.entity.dao.Product;
 import ru.itprogram.entity.dao.ProductType;
@@ -15,37 +16,56 @@ import ru.itprogram.service.converter.Converter;
 import ru.itprogram.service.converter.brand.BrandToBrandDto;
 import ru.itprogram.service.converter.producttype.ProductTypeToProductTypeDto;
 import ru.itprogram.service.converter.promocode.PromoCodeToPromoCodeDto;
+import ru.itprogram.utils.generater.dto.BrandDtoGenerate;
+import ru.itprogram.utils.generater.dto.ProductDtoGenerate;
+import ru.itprogram.utils.generater.dto.ProductTypeDtoGenerate;
 
 import java.util.List;
 
 public class ProductToProductDto implements Converter<ProductDto, Product> {
+    @Autowired
+    private BrandRepository brandRepository;
+    @Autowired
+    private BrandDtoGenerate brandDtoGenerate;
+    @Autowired
+    private BrandToBrandDto brandToBrandDto;
+    @Autowired
+    private ProductTypeRepository productTypeRepository;
+    @Autowired
+    private ProductTypeDtoGenerate productTypeDtoGenerate;
+    @Autowired
+    private ProductTypeToProductTypeDto productTypeToProductTypeDto;
+    @Autowired
+    private PromoCodeRepository promoCodeRepository;
+    @Autowired
+    private PromoCodeToPromoCodeDto promoCodeToPromoCodeDto;
+    @Autowired
+    private ProductDtoGenerate productDtoGenerate;
+
     @Override
     public ProductDto conversion(Product product) {
-        BrandRepository brandRepository = new BrandRepository();
         List<Brand> brands = brandRepository.getAllEntity();
-        BrandDto brandDto = new BrandDto();
+        BrandDto brandDto = brandDtoGenerate.getBrandDto();
         for (Brand brand : brands) {
             if (brand.getId() == product.getBrandId()) {
-                brandDto = new BrandToBrandDto().conversion(brand);
+                brandDto = brandToBrandDto.conversion(brand);
             }
         }
-        ProductTypeRepository productTypeRepository = new ProductTypeRepository();
         List<ProductType> productTypes = productTypeRepository.getAllEntity();
-        ProductTypeDto productTypeDto = new ProductTypeDto();
+        ProductTypeDto productTypeDto = null;
         for (ProductType productType : productTypes) {
             if (productType.getId() == product.getProductTypeId()) {
-                productTypeDto = new ProductTypeToProductTypeDto().conversion(productType);
+                productTypeDto = productTypeToProductTypeDto.conversion(productType);
             }
         }
-        PromoCodeRepository promoCodeRepository = new PromoCodeRepository();
         List<PromoCode> promoCodes = promoCodeRepository.getAllEntity();
-        PromoCodeDto promoCodeDto = new PromoCodeDto();
+        PromoCodeDto promoCodeDto = null;
         for (PromoCode promoCode : promoCodes) {
             if (promoCode.getId() == product.getPromoCodId()) {
-                promoCodeDto = new PromoCodeToPromoCodeDto().conversion(promoCode);
+                promoCodeDto = promoCodeToPromoCodeDto.conversion(promoCode);
             }
         }
-        ProductDto productDto = new ProductDto();
+        ProductDto productDto = productDtoGenerate.getProductDto();
         productDto.setId(product.getId());
         productDto.setBrandDto(brandDto);
         productDto.setProductTypeDto(productTypeDto);

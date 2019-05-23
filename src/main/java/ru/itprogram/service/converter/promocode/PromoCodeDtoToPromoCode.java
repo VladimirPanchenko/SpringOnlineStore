@@ -1,16 +1,23 @@
 package ru.itprogram.service.converter.promocode;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.PromoCode;
 import ru.itprogram.entity.dto.PromoCodeDto;
 import ru.itprogram.repository.PromoCodeRepository;
 import ru.itprogram.service.converter.Converter;
+import ru.itprogram.utils.generater.dao.PromoCodeGenerate;
 
 import java.util.List;
 
 public class PromoCodeDtoToPromoCode implements Converter<PromoCode, PromoCodeDto> {
+    @Autowired
+    private PromoCodeGenerate promoCodeGenerate;
+    @Autowired
+    private PromoCodeRepository promoCodeRepository;
+
     @Override
     public PromoCode conversion(PromoCodeDto promoCodeDto) {
-        PromoCode promoCode = new PromoCode();
+        PromoCode promoCode = promoCodeGenerate.getPromoCode();
         promoCode.setId(getIdPromoCode(promoCodeDto));
         promoCode.setCode(promoCodeDto.getCode());
         promoCode.setDiscount(promoCode.getDiscount());
@@ -18,7 +25,7 @@ public class PromoCodeDtoToPromoCode implements Converter<PromoCode, PromoCodeDt
     }
 
     private int getIdPromoCode(PromoCodeDto promoCodeDto) {
-        List<PromoCode> promoCodes = new PromoCodeRepository().getAllEntity();
+        List<PromoCode> promoCodes = promoCodeRepository.getAllEntity();
         return getId(promoCodes, promoCodeDto);
     }
 

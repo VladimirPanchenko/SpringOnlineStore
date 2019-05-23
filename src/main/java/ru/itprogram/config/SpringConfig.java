@@ -1,7 +1,9 @@
 package ru.itprogram.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import ru.itprogram.entity.dao.*;
 import ru.itprogram.entity.dto.*;
@@ -25,19 +27,47 @@ import ru.itprogram.service.converter.user.UserToUserDto;
 import ru.itprogram.utils.CurrentConnection;
 import ru.itprogram.utils.ReadProductInFile;
 import ru.itprogram.utils.generater.ArrayListGenerate;
+import ru.itprogram.utils.generater.CurrentConnectionGenerate;
+import ru.itprogram.utils.generater.FileReaderGenerate;
 import ru.itprogram.utils.generater.dao.*;
 import ru.itprogram.utils.generater.dto.*;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 @Configuration
+@PropertySource("classpath:database.properties")
 public class SpringConfig {
 
+    @Value("${jdbc.url}")
+    private String dbUrl;
+
+    @Value("${jdbc.username}")
+    private String dbUserName;
+
+    @Value("${jdbc.password}")
+    private String dbPassword;
+
     @Bean
-//    @Scope("prototype")
-    public CurrentConnection getCurrentConnection() {
-        return new CurrentConnection();
+    public FileReaderGenerate getFileReaderGenerater() {
+        return new FileReaderGenerate() {
+            @Override
+            public FileReader createFileReader() throws FileNotFoundException {
+                return new FileReader(ReadProductInFile.PATH);
+            }
+        };
+    }
+
+    @Bean
+    public CurrentConnectionGenerate getCurrentConnectionGenerate() {
+        return new CurrentConnectionGenerate() {
+            @Override
+            public CurrentConnection createCurrentConnection() {
+                return new CurrentConnection(dbUrl, dbUserName, dbPassword);
+            }
+        };
     }
 
     @Bean
@@ -361,7 +391,6 @@ public class SpringConfig {
     }
 
     @Bean
-//    @Scope("prototype")
     public BrandDtoToBrand getBrandDtoToBrand() {
         return new BrandDtoToBrand();
     }
@@ -412,24 +441,12 @@ public class SpringConfig {
     }
 
     @Bean
-    @Scope("prototype")
     public UserDtoToUser getUserDtoToUser() {
         return new UserDtoToUser();
     }
 
     @Bean
-//    @Scope("prototype")
     public UserToUserDto getUserToUserDto() {
         return new UserToUserDto();
     }
-
-//    @Bean
-//    public UserConverterGenerate getUserConverterGenerate() {
-//        return new UserConverterGenerate() {
-//            @Override
-//            public UserToUserDto createUserToUserDto() {
-//                return new UserToUserDto();
-//            }
-//        };
-//    }
 }

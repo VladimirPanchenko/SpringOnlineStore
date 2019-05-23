@@ -1,22 +1,29 @@
 package ru.itprogram.service.converter.producttype;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.ProductType;
 import ru.itprogram.entity.dto.ProductTypeDto;
 import ru.itprogram.repository.ProductTypeRepository;
 import ru.itprogram.service.converter.Converter;
+import ru.itprogram.utils.generater.dao.ProductTypeGenerate;
 
 import java.util.List;
 
 public class ProductTypeDtoToProductType implements Converter<ProductType, ProductTypeDto> {
+    @Autowired
+    private ProductTypeGenerate productTypeGenerate;
+    @Autowired
+    private ProductTypeRepository productTypeRepository;
+
     @Override
     public ProductType conversion(ProductTypeDto productTypeDto) {
-        ProductType productType = new ProductType();
+        ProductType productType = productTypeGenerate.getProductType();
         productType.setId(getIdType(productTypeDto));
         productType.setType(productTypeDto.getType());
         return productType;
     }
     private int getIdType(ProductTypeDto productTypeDto) {
-        List<ProductType> productTypes = new ProductTypeRepository().getAllEntity();
+        List<ProductType> productTypes = productTypeRepository.getAllEntity();
         return getId(productTypes, productTypeDto);
     }
 

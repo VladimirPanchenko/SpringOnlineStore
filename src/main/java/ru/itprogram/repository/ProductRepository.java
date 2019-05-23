@@ -1,25 +1,35 @@
 package ru.itprogram.repository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.itprogram.entity.dao.Product;
 import ru.itprogram.utils.*;
+import ru.itprogram.utils.generater.ArrayListGenerate;
+import ru.itprogram.utils.generater.CurrentConnectionGenerate;
+import ru.itprogram.utils.generater.dao.ProductGenerate;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository implements Repository<Product> {
+    @Autowired
+    private ArrayListGenerate arrayListGenerate;
+    @Autowired
+    private CurrentConnectionGenerate currentConnectionGenerate;
+    @Autowired
+    private ProductGenerate productGenerate;
+
     @Override
     public List<Product> getAllEntity() {
-        List<Product> products = new ArrayList<>();
-        CurrentConnection currentConnection = new CurrentConnection();
+        List<Product> products = arrayListGenerate.getArrayList();
+        CurrentConnection currentConnection = currentConnectionGenerate.getCurrentConnection();
         try {
             Statement statement = currentConnection.getConnection().createStatement();
             ResultSet resultSet = statement.executeQuery(SelectSql.SELECT_ALL_PRODUCT);
             while (resultSet.next()) {
-                Product product = new Product();
+                Product product = productGenerate.getProduct();
                 product.setId(resultSet.getInt("id"));
                 product.setBrandId(resultSet.getInt("brand_id"));
                 product.setProductTypeId(resultSet.getInt("product_type_id"));
@@ -42,7 +52,7 @@ public class ProductRepository implements Repository<Product> {
 
     @Override
     public void saveEntity(Product product) {
-        CurrentConnection currentConnection = new CurrentConnection();
+        CurrentConnection currentConnection = currentConnectionGenerate.getCurrentConnection();
         try {
             PreparedStatement preparedStatement = currentConnection.getConnection()
                     .prepareStatement(InsertSql.INSERT_PRODUCT);
